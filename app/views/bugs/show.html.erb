@@ -1,0 +1,95 @@
+<div class="space-y-6">
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800"><%= @bug.title %></h1>
+        <p class="text-sm text-slate-500 mt-2">
+          Project: <%= @bug.project.name %>
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <% if current_user.admin? %>
+          <%= link_to "Edit", edit_bug_path(@bug),
+              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+          <%= button_to "Delete", bug_path(@bug), method: :delete,
+              data: { turbo_confirm: "Are you sure?" },
+              class: "px-4 py-2 rounded-lg bg-red-600 text-white text-sm" %>
+        <% elsif current_user.developer? && !@bug.status_resolved? && !@bug.status_closed? %>
+          <%= link_to "Update Status", edit_bug_path(@bug),
+              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+        <% elsif current_user.reporter? && @bug.status_resolved? %>
+          <%= link_to "Review Bug", edit_bug_path(@bug),
+              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-5">
+      <span class="bg-blue-50 text-blue-700 text-sm px-3 py-1 rounded-full">
+        <%= @bug.status&.humanize %> Status
+      </span>
+      <span class="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full">
+        <%= @bug.priority.humanize %> Priority
+      </span>
+    </div>
+
+    <div class="mt-6">
+      <h2 class="font-semibold text-slate-800 mb-2">Description</h2>
+      <p class="text-slate-600 whitespace-pre-line"><%= @bug.description %></p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-5 border-t border-slate-100">
+      <div>
+        <p class="text-xs text-slate-500">Reported By</p>
+        <p class="font-medium text-slate-700"><%= @bug.reporter.name %></p>
+      </div>
+      <div>
+        <p class="text-xs text-slate-500">Assigned Developer</p>
+        <p class="font-medium text-slate-700"><%= @bug.developer&.name || "Not assigned" %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-slate-800 mb-4">Comments</h2>
+
+    <%= form_with model: [@bug, Comment.new], class: "space-y-3" do |f| %>
+      <%= f.text_area :content, rows: 3, placeholder: "Write a comment...",
+          class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      <%= f.submit "Add Comment",
+          class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer" %>
+    <% end %>
+
+    <div class="mt-6 space-y-4">
+      <% @bug.comments.each do |comment| %>
+        <div class="border-t border-slate-100 pt-4">
+          <div class="flex justify-between items-start gap-3">
+            <div>
+              <p class="font-medium text-slate-800"><%= comment.user.name %></p>
+              <p class="text-xs text-slate-400"><%= comment.created_at.strftime("%d %b %Y, %I:%M %p") %></p>
+            </div>
+
+            <% if current_user.admin? || comment.user_id == current_user.id %>
+              <%= button_to "Delete",
+                  bug_comment_path(@bug, comment),
+                  method: :delete,
+                  data: { turbo_confirm: "Delete this comment?" },
+                  class: "text-red-600 text-xs hover:text-red-800" %>
+            <% end %>
+          </div>
+
+          <p class="text-slate-600 mt-2 whitespace-pre-line"><%= comment.content %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if params[:project_id].present? && params[:project_id].to_s == @bug.project_id.to_s %>
+      <%= link_to "Back to Project", project_path(@bug.project),
+      class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+  <% else %>
+      <%= link_to "Back to Bugs", bugs_path,
+      class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+  <% end %>
+</div>

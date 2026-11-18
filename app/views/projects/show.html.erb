@@ -1,0 +1,85 @@
+
+<div class="space-y-6">
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800"><%= @project.name %></h1>
+        <p class="text-slate-500 mt-2"><%= @project.description %></p>
+      </div>
+
+      <% if current_user.admin? %>
+        <div class="flex gap-2">
+          <%= link_to "Edit", edit_project_path(@project),
+              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700" %>
+
+          <%= button_to "Delete", project_path(@project), method: :delete,
+              data: { turbo_confirm: "Are you sure?" },
+              class: "px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if current_user.admin? %>
+    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">Project Members</h2>
+
+      <% if @project.users.any? %>
+        <div class="divide-y divide-slate-100">
+          <% @project.users.each do |user| %>
+            <div class="flex justify-between items-center py-3">
+              <div>
+                <p class="font-medium text-slate-700"><%= user.name %></p>
+                <p class="text-sm text-slate-500"><%= user.role.humanize %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-slate-500">No members added yet.</p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% visible_bugs = if current_user.admin?
+    @project.bugs
+  elsif current_user.reporter?
+    @project.bugs.where(reported_by_id: current_user.id)
+  else
+    @project.bugs.where(assigned_to_id: current_user.id)
+  end %>
+
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-lg font-semibold text-slate-800">Project Bugs</h2>
+
+      <% if current_user.admin? || current_user.reporter? %>
+        <%= link_to "Report Bug", new_bug_path(project_id: @project.id),
+            class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm" %>
+      <% end %>
+    </div>
+
+    <% if visible_bugs.any? %>
+      <div class="space-y-3">
+        <% visible_bugs.each do |bug| %>
+          <div class="border border-slate-200 rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between gap-3">
+            <div>
+              <h3 class="font-semibold text-slate-800"><%= bug.title %></h3>
+              <p class="text-sm text-slate-500 mt-1">
+                <%= bug.status&.humanize %> · <%= bug.priority.humanize %>
+              </p>
+            </div>
+
+            <%= link_to "View Details ", bug_path(bug ,project_id: @project.id),
+                class: "text-blue-600 hover:text-blue-800 text-sm font-medium self-start" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-slate-500">No bugs assigned or reported to you in this project.</p>
+    <% end %>
+  </div>
+
+  <%= link_to "Back to Projects", projects_path,
+      class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+</div>
