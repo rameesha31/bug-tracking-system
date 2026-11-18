@@ -18,11 +18,13 @@ The application provides role-based access for Admins, Reporters, and Developers
 ## 3. User Roles
 
 ### Admin
+
 - Create, update, and delete projects.
 - Manage project members.
 - View and manage all bugs.
 
 ### Reporter
+
 - View assigned projects.
 - Report new bugs.
 - Assign developers to reported bugs.
@@ -30,6 +32,7 @@ The application provides role-based access for Admins, Reporters, and Developers
 - Close or reopen bugs.
 
 ### Developer
+
 - View assigned projects.
 - View bugs assigned to them.
 - Update bug status to In Progress or Resolved.
@@ -110,4 +113,40 @@ Open the application in your browser:
 http://localhost:3000
 ```
 
-## 8. Screenshots of Working Project 
+## 8. Screenshots of Working Project
+
+### Login Page
+
+![Login](screenshots/login.png)
+
+### Signup Page
+
+![Signup](screenshots/register.png)
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Projects display
+
+![Porjects](screenshots/project_display_page.png)
+
+### Project Detail
+
+![Projects](screenshots/project_detail_page.png)
+
+### Create Project Page
+
+![Projects](screenshots/create_project_page.png)
+
+### Bug Display
+
+![Bugs](screenshots/bug_display_page.png)
+
+### Bug Detail Page and Comments
+
+![Bugs](screenshots/bug_detail_page_and_comments.png)
+
+### Create Bug Page
+
+![Bugs](screenshots/create_bug_page.png)
