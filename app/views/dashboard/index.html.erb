@@ -117,37 +117,35 @@
         <h2 class="text-3xl font-bold mt-2"><%= @assigned_bugs.count %></h2>
       </div>
 
-    </div>
-  <% end %>
+      </div>
+    <% end %>
 
-  <!-- Assigned Bugs -->
-  <% if @assigned_bugs.any? %>
-    <div class="bg-white p-6 rounded-xl border shadow-sm">
-      <h2 class="text-xl font-bold mb-4">Assigned to Me</h2>
+    <% unless current_user.admin? %>
+    <% if @assigned_bugs.any? %>
+      <div class="bg-white p-6 rounded-xl border shadow-sm">
+        <h2 class="text-xl font-bold mb-4">Assigned to Me</h2>
 
-      <% @assigned_bugs.each do |bug| %>
-        <div class="border-b last:border-0 py-4 flex justify-between items-center gap-4">
+        <% @assigned_bugs.each do |bug| %>
+          <div class="border-b last:border-0 py-4 flex justify-between items-center gap-4">
+            <div>
+              <p class="font-semibold text-slate-800">
+                <%= bug.title %>
+              </p>
 
-          <div>
-            <p class: "font-semibold text-slate-800 > 
-               <%= bug.title %>
-            </p>
+              <p class="text-sm text-slate-500 mt-1">
+                Project: <%= bug.project.name %>
+                · Priority: <%= bug.priority.humanize %>
+              </p>
+            </div>
 
-            <p class="text-sm text-slate-500 mt-1">
-              Project: <%= bug.project.name %>
-              · Priority: <%= bug.priority.humanize %>
-            </p>
+            <span class="text-sm bg-slate-100 px-3 py-1 rounded-full">
+              <%= bug.status&.humanize %>
+            </span>
           </div>
-
-          <span class="text-sm bg-slate-100 px-3 py-1 rounded-full">
-            <%= bug.status&.humanize %>
-          </span>
-
-        </div>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
-
   <!-- All Bugs -->
   <div class="bg-white p-6 rounded-xl border shadow-sm">
     <h2 class="text-xl font-bold mb-4">All Bugs</h2>
@@ -176,5 +174,5 @@
       <p class="text-slate-500">No bugs found.</p>
     <% end %>
   </div>
-<
+
 </div>
