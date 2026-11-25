@@ -1,6 +1,9 @@
+
 <div class="space-y-6">
   <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-    <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold text-slate-800"><%= @bug.title %></h1>
         <p class="text-sm text-slate-500 mt-2">
@@ -8,88 +11,90 @@
         </p>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
         <% if current_user.admin? %>
           <%= link_to "Edit", edit_bug_path(@bug),
-              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+              class: "inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 whitespace-nowrap" %>
+
           <%= button_to "Delete", bug_path(@bug), method: :delete,
               data: { turbo_confirm: "Are you sure?" },
-              class: "px-4 py-2 rounded-lg bg-red-600 text-white text-sm" %>
+              class: "inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 whitespace-nowrap" %>
+
         <% elsif current_user.developer? && !@bug.status_resolved? && !@bug.status_closed? %>
           <%= link_to "Update Status", edit_bug_path(@bug),
-              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+              class: "inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 whitespace-nowrap" %>
+
         <% elsif current_user.reporter? && @bug.status_resolved? %>
           <%= link_to "Review Bug", edit_bug_path(@bug),
-              class: "px-4 py-2 rounded-lg bg-blue-600 text-white text-sm" %>
+              class: "inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 whitespace-nowrap" %>
         <% end %>
       </div>
     </div>
 
+    <!-- Status badges -->
     <div class="flex flex-wrap gap-2 mt-5">
       <span class="bg-blue-50 text-blue-700 text-sm px-3 py-1 rounded-full">
-        Status: <%= @bug.status&.humanize %> 
+        Status: <%= @bug.status&.humanize %>
       </span>
+
       <span class="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full">
-        Priority: <%= @bug.priority.humanize %> 
+        Priority: <%= @bug.priority.humanize %>
+      </span>
+
+      <span class="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full">
+        Acknowledged: <%= @bug.acknowledged? ? "Yes" : "No" %>
       </span>
     </div>
 
-    <div class="mt-6">
-      <h2 class="font-semibold text-slate-800 mb-2">Description</h2>
-      <p class="text-slate-600 whitespace-pre-line"><%= @bug.description %></p>
-    </div>
+    <!-- Details in one row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-7 pt-5 border-t border-slate-100">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-5 border-t border-slate-100">
       <div>
-        <p class="text-xs text-slate-500">Reported By</p>
+        <h2 class="text-sm font-semibold text-slate-500 mb-2">Description</h2>
+        <p class="text-slate-700 whitespace-pre-line break-words"><%= @bug.description %></p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold text-slate-500 mb-2">Reported By</h2>
         <p class="font-medium text-slate-700"><%= @bug.reporter.name %></p>
       </div>
+
       <div>
-        <p class="text-xs text-slate-500">Assigned Developer</p>
+        <h2 class="text-sm font-semibold text-slate-500 mb-2">Assigned Developer</h2>
         <p class="font-medium text-slate-700"><%= @bug.developer&.name || "Not assigned" %></p>
       </div>
+
     </div>
-  </div>
 
-  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-slate-800 mb-4">Comments</h2>
+    <!-- Bug Images -->
+    <% if @bug.images.attached? %>
+      <div class="mt-7 pt-5 border-t border-slate-100">
+        <h2 class="font-semibold text-slate-800 mb-4">Bug Images</h2>
 
-    <%= form_with model: [@bug, Comment.new], class: "space-y-3" do |f| %>
-      <%= f.text_area :content, rows: 3, placeholder: "Write a comment...",
-          class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
-      <%= f.submit "Add Comment",
-          class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer" %>
+        <div class="flex flex-wrap gap-4">
+          <% @bug.images.each do |image| %>
+            <div class="w-40 h-32 bg-slate-50 border border-slate-200 rounded-lg p-2">
+              <%= image_tag image,
+                  class: "w-full h-full object-contain rounded-md" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     <% end %>
 
-    <div class="mt-6 space-y-4">
-      <% @bug.comments.each do |comment| %>
-        <div class="border-t border-slate-100 pt-4">
-          <div class="flex justify-between items-start gap-3">
-            <div>
-              <p class="font-medium text-slate-800"><%= comment.user.name %></p>
-              <p class="text-xs text-slate-400"><%= comment.created_at.strftime("%d %b %Y, %I:%M %p") %></p>
-            </div>
-
-            <% if current_user.admin? || comment.user_id == current_user.id %>
-              <%= button_to "Delete",
-                  bug_comment_path(@bug, comment),
-                  method: :delete,
-                  data: { turbo_confirm: "Delete this comment?" },
-                  class: "text-red-600 text-xs hover:text-red-800" %>
-            <% end %>
-          </div>
-
-          <p class="text-slate-600 mt-2 whitespace-pre-line"><%= comment.content %></p>
-        </div>
-      <% end %>
-    </div>
   </div>
 
+  <!-- Comments -->
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <%= render "comments" %>
+  </div>
+
+  <!-- Back link -->
   <% if params[:project_id].present? && params[:project_id].to_s == @bug.project_id.to_s %>
-      <%= link_to "Back to Project", project_path(@bug.project),
-      class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+    <%= link_to "Back to Project", project_path(@bug.project),
+        class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
   <% else %>
-      <%= link_to "Back to Bugs", bugs_path,
-      class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+    <%= link_to "Back to Bugs", bugs_path,
+        class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
   <% end %>
 </div>

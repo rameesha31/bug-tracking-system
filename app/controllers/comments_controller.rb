@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :authenticate_user!
+  include Authentication
 
   def create
     @bug = Bug.find(params[:bug_id])

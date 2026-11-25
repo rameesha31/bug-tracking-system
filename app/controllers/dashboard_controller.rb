@@ -1,22 +1,25 @@
-
 class DashboardController < ApplicationController
-  before_action :authenticate_user!
+  include Authentication
 
   def index
-    if current_user.admin?
-      @projects = Project.all
-    else
-      @projects = current_user.projects
-    end
+    # if current_user.admin?
+    #   @projects = Project.all
+    # else
+    #   @projects = current_user.projects
+    # end
 
-    if current_user.admin?
-      @bugs = Bug.all
-    else
-      @bugs = Bug.where(project_id: @projects.select(:id))
-    end
+    @projects = Project.access_project(current_user)
+
+    # if current_user.admin?
+    #   @bugs = Bug.all
+    # else
+    #   @bugs = Bug.where(project_id: @projects.select(:id))
+    # end
+
+    @bugs = Bug.dashboard_bugs(current_user)
 
     if params[:q].present?
-      @bugs = @bugs.where("title ILIKE ?", "%#{params[:q]}%")
+      @bugs = @bugs.search(params[:q])
     end
 
     # Filter by project

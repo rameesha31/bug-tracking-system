@@ -4,5 +4,9 @@ class Project < ApplicationRecord
 
   has_many :bugs, dependent: :destroy
 
-    validates :name , presence: true
+  validates :name , presence: true
+
+  scope :access_project, ->(user) {
+    user.admin? ? all : user.projects
+  }
 end

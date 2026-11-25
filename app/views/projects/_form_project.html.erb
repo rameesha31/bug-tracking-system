@@ -1,0 +1,64 @@
+
+<%= form_with model: project, class: "space-y-5" do |f| %>
+
+    <% if project.new_record? %>
+        <div>
+            <%= f.label :name, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.text_field :name,
+                class: "w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" %>
+        </div>
+
+        <div>
+            <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.text_area :description, rows: 4,
+                class: "w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" %>
+        </div>
+
+        <div>
+            <%= label_tag "user_ids[]", "Project Members",
+                class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= select_tag "user_ids[]",
+                options_from_collection_for_select(@users, :id, :name),
+                multiple: true,
+                class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+
+        <div class="flex gap-3">
+            <%= f.submit "Create Project",
+                class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium cursor-pointer" %>
+            <%= link_to "Cancel", projects_path,
+                class: "px-5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50" %>
+        </div>
+
+        <% else %>
+            <div>
+                <%= f.label :name, class: "block text-sm font-medium text-slate-700 mb-2" %>
+                <%= f.text_field :name,
+                    class: "w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" %>
+            </div>
+
+            <div>
+                <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-2" %>
+                <%= f.text_area :description, rows: 4,
+                    class: "w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" %>
+            </div>
+
+        <div>
+            <%= label_tag "user_ids[]", "Project Members",
+                class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= select_tag "user_ids[]",
+                options_from_collection_for_select(@users, :id, :name, @project.user_ids),
+                multiple: true,
+                class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+
+        <div class="flex gap-3">
+            <%= f.submit "Update Project",
+                class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium cursor-pointer" %>
+            <%= link_to "Cancel", project_path(@project),
+                class: "px-5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50" %>
+        </div>
+    <% end %>
+    
+  <% end %>
+  

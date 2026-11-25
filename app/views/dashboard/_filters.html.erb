@@ -1,0 +1,56 @@
+<div class="bg-white p-6 rounded-xl border shadow-sm">
+  <h2 class="text-xl font-bold mb-5">Filter Bugs</h2>
+
+  <%= form_with url: root_path, method: :get, local: true do |f| %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+
+      <div>
+        <%= f.label :q, "Search", class: "block text-sm font-medium mb-2" %>
+        <%= f.text_field :q, value: params[:q],
+            placeholder: "Search bug title",
+            class: "w-full border border-slate-300 rounded-lg p-3" %>
+      </div>
+
+      <div>
+        <%= f.label :project_id, "Project", class: "block text-sm font-medium mb-2" %>
+        <%= f.select :project_id,
+            options_from_collection_for_select(@projects, :id, :name, params[:project_id]),
+            { include_blank: "All Projects" },
+            class: "w-full border border-slate-300 rounded-lg p-3" %>
+      </div>
+
+      <div>
+        <%= f.label :status, "Status", class: "block text-sm font-medium mb-2" %>
+        <%= f.select :status,
+            options_for_select(Bug.statuses.keys.map { |s| [s.humanize, s] }, params[:status]),
+            { include_blank: "All Statuses" },
+            class: "w-full border border-slate-300 rounded-lg p-3" %>
+      </div>
+
+      <div>
+        <%= f.label :priority, "Priority", class: "block text-sm font-medium mb-2" %>
+        <%= f.select :priority,
+            options_for_select(Bug.priorities.keys.map { |p| [p.humanize, p] }, params[:priority]),
+            { include_blank: "All Priorities" },
+            class: "w-full border border-slate-300 rounded-lg p-3" %>
+      </div>
+
+      <div>
+        <%= f.label :sort, "Sort By", class: "block text-sm font-medium mb-2" %>
+        <%= f.select :sort,
+            options_for_select([["Newest", "newest"], ["Oldest", "oldest"], ["Title", "title"]], params[:sort]),
+            {},
+            class: "w-full border border-slate-300 rounded-lg p-3" %>
+      </div>
+
+    </div>
+
+    <div class="flex gap-3 mt-5">
+      <%= f.submit "Apply Filters",
+          class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium cursor-pointer" %>
+
+      <%= link_to "Clear Filters", root_path,
+          class: "bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg font-medium" %>
+    </div>
+  <% end %>
+</div>

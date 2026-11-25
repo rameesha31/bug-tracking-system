@@ -8,10 +8,14 @@ class User < ApplicationRecord
     has_many :reported_bugs , class_name: "Bug" , foreign_key: "reported_by_id"
 
     enum :role, {admin:0 , developer:1 , reporter:2} 
+    
     validates :name , presence: true 
     normalizes :email, with: ->(email) { email.strip.downcase }
     validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, length: { minimum: 8 }, allow_nil: true 
 
-    
+    scope :project_members, -> {
+        where(role: [:developer, :reporter])
+    }
+
 end

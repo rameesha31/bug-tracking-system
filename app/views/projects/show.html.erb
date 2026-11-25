@@ -41,14 +41,6 @@
     </div>
   <% end %>
 
-  <% visible_bugs = if current_user.admin?
-    @project.bugs
-  elsif current_user.reporter?
-    @project.bugs.where(reported_by_id: current_user.id)
-  else
-    @project.bugs.where(assigned_to_id: current_user.id)
-  end %>
-
   <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
     <div class="flex justify-between items-center mb-5">
       <h2 class="text-lg font-semibold text-slate-800">Project Bugs</h2>
@@ -59,9 +51,9 @@
       <% end %>
     </div>
 
-    <% if visible_bugs.any? %>
+    <% if @visible_bugs.any? %>
       <div class="space-y-3">
-        <% visible_bugs.each do |bug| %>
+        <% @visible_bugs.each do |bug| %>
           <div class="border border-slate-200 rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between gap-3">
             <div>
               <h3 class="font-semibold text-slate-800"><%= bug.title %></h3>

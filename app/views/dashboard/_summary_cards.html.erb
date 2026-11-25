@@ -1,0 +1,50 @@
+<% if current_user.admin? %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Total Projects</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @total_projects %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Total Bugs</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @total_bugs %></h2>
+    </div>
+
+  </div>
+<% else %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Total Projects</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @total_projects %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Total Bugs</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @total_bugs %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">New Bugs</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @new_bugs %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">In Progress</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @in_progress_bugs %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Resolved Bugs</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @resolved_bugs %></h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+      <p class="text-sm text-slate-500">Assigned to Me</p>
+      <h2 class="text-3xl font-bold mt-2"><%= @assigned_bugs.count %></h2>
+    </div>
+
+    </div>
+  <% end %>
+

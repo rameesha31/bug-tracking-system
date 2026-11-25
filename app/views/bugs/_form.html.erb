@@ -1,0 +1,110 @@
+
+<%= form_with model: bug, class: "space-y-5" do |f| %>
+
+    <% if bug.new_record? %>
+  
+      <%= f.hidden_field :project_id %>
+  
+      <div>
+        <%= f.label :title, class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.text_field :title,
+            class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+  
+      <div>
+        <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.text_area :description, rows: 4,
+            class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+
+      <div>
+        <%= f.label :image, "Bug Image", class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.file_field :images, multiple: true, accept: "image/*" , class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+  
+      <div>
+        <%= f.label :priority, class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.select :priority, Bug.priorities.keys.map { |p| [p.humanize, p] },
+            {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+  
+      <div>
+        <%= f.label :status, class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.select :status, Bug.statuses.keys.map { |s| [s.humanize, s] },
+            {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+  
+      <div>
+        <%= f.label :assigned_to_id, "Assign Developer",
+            class: "block text-sm font-medium text-slate-700 mb-2" %>
+        <%= f.collection_select :assigned_to_id, @developers, :id, :name,
+            { prompt: "Select Developer" },
+            class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+  
+      <%= f.submit "Create Bug",
+          class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium cursor-pointer" %>
+  
+    <% else %>
+  
+      <% if current_user.admin? %>
+        <div>
+          <%= f.label :title, class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.text_field :title,
+              class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+  
+        <div>
+          <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.text_area :description, rows: 4,
+              class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :image, "Bug Image", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.file_field :images, multiple: true ,accept: "image/*" , class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :priority, class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :priority, Bug.priorities.keys.map { |p| [p.humanize, p] },
+              {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+  
+        <div>
+          <%= f.label :status, class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :status, Bug.statuses.keys.map { |s| [s.humanize, s] },
+              {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+  
+      <% elsif current_user.developer? %>
+        <div>
+          <%= f.label :status, class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :status,
+              [["In Progress", "in_progress"], ["Resolved", "resolved"]],
+              {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :acknowledged, "Acknowledge Bug" %>
+          <%= f.check_box :acknowledged %>
+        </div>
+        
+      <% elsif current_user.reporter? && bug.status_resolved? %>
+        <div>
+          <%= f.label :status, "Review Result",
+              class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :status,
+              [["Close Bug", "closed"]],
+              {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+        </div>
+      <% end %>
+  
+      <div class="flex gap-3">
+        <%= f.submit "Save Changes",
+            class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium cursor-pointer" %>
+        <%= link_to "Cancel", bug_path(bug),
+            class: "px-5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50" %>
+      </div>
+  
+    <% end %>
+  
+  <% end %>
+  

@@ -51,6 +51,7 @@ group :development do
 
   # Highlight the fine-grained location where an error occurred [https://github.com/ruby/error_highlight]
   gem "error_highlight", ">= 0.4.0", platforms: [ :ruby ]
+  
 end
 
 group :test do
@@ -61,4 +62,8 @@ end
 
 gem "bcrypt", "~> 3.1"
 
-gem "cssbundling-rails", "~> 1.4"
+gem "cssbundling-rails", "~> 1.4" 
+
+gem "clockwork"
+
+gem "solid_queue"

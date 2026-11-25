@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bug: one
+  recipient_email: MyString
+  subject: MyString
+  status: 1
+  sent_at: 2026-11-20 16:42:43
+
+two:
+  bug: two
+  recipient_email: MyString
+  subject: MyString
+  status: 1
+  sent_at: 2026-11-20 16:42:43
