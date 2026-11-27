@@ -31,6 +31,29 @@ class Bug < ApplicationRecord
 
   validates :title , presence: true
   validate :acceptable_image
+  def status_badge_class
+    case status
+    when "new_bug"
+      "bg-blue-100 text-blue-700"
+    when "in_progress"
+      "bg-yellow-100 text-yellow-700"
+    when "resolved"
+      "bg-green-100 text-green-700"
+    when "closed"
+      "bg-slate-200 text-slate-700"
+    end
+  end
+  
+  def priority_badge_class
+    case priority
+    when "low"
+      "bg-green-100 text-green-700"
+    when "medium"
+      "bg-yellow-100 text-yellow-700"
+    when "high"
+      "bg-red-100 text-red-700"
+    end
+  end
 
   private
 

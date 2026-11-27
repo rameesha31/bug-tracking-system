@@ -1,0 +1,77 @@
+
+<div id="bug_control_<%= bug.id %>"
+     class="flex flex-wrap items-center gap-3">
+
+  <%# STATUS %>
+  <details class="relative">
+    <summary class="list-none cursor-pointer">
+      <span class="<%= bug.status_badge_class %> px-3 py-1.5 rounded-full text-sm font-medium">
+        <%= bug.status.humanize %>
+      </span>
+    </summary>
+
+    <% if current_user.admin? || current_user.developer? ||
+          (current_user.reporter? && bug.status_resolved?) %>
+
+      <div class="absolute z-20 mt-2 w-40 rounded-lg bg-white shadow-lg border border-slate-100 p-2">
+
+        <% statuses = current_user.reporter? ? ["closed"] : Bug.statuses.keys %>
+
+        <% statuses.each do |status| %>
+          <%= button_to status.humanize,
+              bug_path(bug),
+              method: :patch,
+              params: { bug: { status: status } },
+              form: { data: { turbo_stream: true } },
+              class: "block w-full text-left px-3 py-2 text-sm rounded-md hover:bg-slate-100" %>
+        <% end %>
+
+      </div>
+    <% end %>
+  </details>
+
+
+  <%# PRIORITY %>
+  <details class="relative">
+    <summary class="list-none cursor-pointer">
+      <span class="<%= bug.priority_badge_class %> px-3 py-1.5 rounded-full text-sm font-medium">
+        <%= bug.priority.humanize %>
+      </span>
+    </summary>
+
+    <% if current_user.admin? || current_user.reporter? %>
+      <div class="absolute z-20 mt-2 w-36 rounded-lg bg-white shadow-lg border border-slate-100 p-2">
+
+        <% Bug.priorities.keys.each do |priority| %>
+          <%= button_to priority.humanize,
+              bug_path(bug),
+              method: :patch,
+              params: { bug: { priority: priority } },
+              form: { data: { turbo_stream: true } },
+              class: "block w-full text-left px-3 py-2 text-sm rounded-md hover:bg-slate-100" %>
+        <% end %>
+
+      </div>
+    <% end %>
+  </details>
+
+
+  <%# ACKNOWLEDGED %>
+  <% if current_user.admin? || current_user.developer? %>
+
+    <%= button_to bug.acknowledged? ? "Acknowledged: Yes" : "Acknowledged: No",
+        bug_path(bug),
+        method: :patch,
+        params: { bug: { acknowledged: !bug.acknowledged? } },
+        form: { data: { turbo_stream: true } },
+        class: "bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-sm hover:bg-slate-200" %>
+
+  <% else %>
+
+    <span class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-sm">
+      Acknowledged: <%= bug.acknowledged? ? "Yes" : "No" %>
+    </span>
+
+  <% end %>
+
+</div>

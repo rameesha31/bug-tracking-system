@@ -58,17 +58,15 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-6 py-8">
-      <% if notice.present? %>
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-          <%= notice %>
-        </div>
-      <% end %>
-
-      <% if alert.present? %>
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-          <%= alert %>
-        </div>
-      <% end %>
+      <div id="flash_messages">
+        <% if notice.present? %>
+          <%= render "shared/flash_message", message: notice, type: :success %>
+        <% end %>
+      
+        <% if alert.present? %>
+          <%= render "shared/flash_message", message: alert, type: :error %>
+        <% end %>
+      </div>
 
       <%= yield %>
     </main>

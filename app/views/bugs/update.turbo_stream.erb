@@ -1,0 +1,21 @@
+<% if @update_result == true%>
+
+  <%= turbo_stream.replace "bug_control_#{@bug.id}" do %>
+    <%= render "bug_control", bug: @bug %>
+  <% end %>
+
+  <%= turbo_stream.prepend "flash_messages" do %>
+    <%= render "shared/flash_message",
+        message: @update_message,
+        type: :success %>
+  <% end %>
+
+<% else %>
+
+  <%= turbo_stream.prepend "flash_messages" do %>
+    <%= render "shared/flash_message",
+        message: @update_message,
+        type: :error %>
+  <% end %>
+
+<% end %>

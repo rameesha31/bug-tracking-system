@@ -1,0 +1,9 @@
+<%= turbo_stream.append "comments_list", partial: "comments/comment", locals: { comment: @comment } %>
+
+<%= turbo_stream.replace "comment_form", partial: "comments/form",locals: { bug: @bug, comment: Comment.new } %>
+<%= turbo_stream.prepend "comments_list" do %>
+    <p data-controller="flash"
+       class="text-green-600 text-sm mb-3">
+      Comment successfully added!
+    </p>
+<% end %>

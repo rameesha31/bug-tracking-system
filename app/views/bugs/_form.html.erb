@@ -1,9 +1,9 @@
 
-<%= form_with model: bug, class: "space-y-5" do |f| %>
+<%= form_with model: bug, class: "space-y-5" ,data: { turbo: false } do |f| %>
 
     <% if bug.new_record? %>
   
-      <%= f.hidden_field :project_id %>
+      <%= f.hidden_field :project_id , data: { project_selection_target: "projectId" } %>
   
       <div>
         <%= f.label :title, class: "block text-sm font-medium text-slate-700 mb-2" %>
@@ -34,13 +34,12 @@
             {}, class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
       </div>
   
-      <div>
-        <%= f.label :assigned_to_id, "Assign Developer",
-            class: "block text-sm font-medium text-slate-700 mb-2" %>
-        <%= f.collection_select :assigned_to_id, @developers, :id, :name,
-            { prompt: "Select Developer" },
-            class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
-      </div>
+      <%= f.collection_select :assigned_to_id, @developers, :id, :name,
+      { prompt: "Select Developer" },
+      {
+        class: "w-full rounded-lg border border-slate-300 px-3 py-2",
+        data: { project_selection_target: "developer" }
+      } %>
   
       <%= f.submit "Create Bug",
           class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium cursor-pointer" %>

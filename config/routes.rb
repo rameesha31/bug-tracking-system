@@ -1,11 +1,17 @@
 Rails.application.routes.draw do
+  get "project_developers/index"
   get "dashboard/index"
-  resources :projects
+  resources :projects do 
+    resources :project_developers, only: [:index]
+  end 
   get "bugs/select_project", to: "bugs#select_project", as: :select_project_bugs
 
   resources :bugs do 
     resources :comments, only: [:create , :destroy]
   end 
+
+  # get "projects/:project_id/developers" , to: "bugs#developers" , as: :project_developers
+
   get "signup" , to: "registrations#new"
   post "signup" , to: "registrations#create"
 

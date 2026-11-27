@@ -1,0 +1,30 @@
+
+<%= form_with model: [bug, comment],
+    class: "space-y-3",
+    data: {
+      controller: "comment-form",
+      action: "turbo:submit-start->comment-form#showLoading turbo:submit-end->comment-form#hideLoading"
+    } do |f| %>
+
+    <%= f.text_area :content, rows: 3, placeholder: "Write a comment...",
+        data: { comment_form_target: "input",
+          action: "focus->comment-form#validate input->comment-form#validate"},
+        class: "w-full rounded-lg border border-slate-300 px-3 py-2" %>
+
+        <p data-comment-form-target="error"
+          class="hidden text-red-600 text-sm">
+          Content can't be blank
+        </p>
+
+  <button type="submit"
+      data-comment-form-target="button"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer flex items-center gap-2">
+
+    <span data-comment-form-target="spinner"
+        class="hidden animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent">
+    </span>
+
+    <span data-comment-form-target="text">Add Comment</span>
+  </button> 
+
+<% end %>

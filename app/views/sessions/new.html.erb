@@ -6,10 +6,6 @@
       Login to Bugzilla
     </h1>
 
-    <% if flash[:alert] %>
-      <p class="mb-4 text-red-600"><%= flash[:alert] %></p>
-    <% end %>
-
     <%= form_with url: login_path do |f| %>
 
       <div class="mb-4">

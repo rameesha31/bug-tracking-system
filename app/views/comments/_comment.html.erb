@@ -1,0 +1,21 @@
+
+<div id="<%= dom_id(comment) %>" class="border-t border-slate-100 pt-4">
+  <div class="flex justify-between items-start gap-3">
+    <div>
+      <p class="font-medium text-slate-800"><%= comment.user.name %></p>
+      <p class="text-xs text-slate-400">
+        <%= comment.created_at.strftime("%d %b %Y, %I:%M %p") %>
+      </p>
+    </div>
+ 
+    <% if current_user.admin? || comment.user_id == current_user.id %>
+      <%= button_to "Delete",
+          bug_comment_path(comment.bug, comment),
+          method: :delete,
+          data: { turbo_confirm: "Delete this comment?" },
+          class: "text-red-600 text-xs hover:text-red-800" %>
+    <% end %>
+  </div>
+
+  <p class="text-slate-600 mt-2 whitespace-pre-line"><%= comment.content %></p>
+</div>

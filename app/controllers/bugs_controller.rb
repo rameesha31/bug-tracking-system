@@ -20,15 +20,18 @@ class BugsController < ApplicationController
   end
 
   def new
+    # @projects = current_user.admin? ? Project.all : current_user.projects
+    # if params[:project_id].present?
+    #   @project = @projects.find(params[:project_id])
+    #   @bug = Bug.new(project_id: @project.id)
+    #   @developers = @project.users.where(role: :developer)
+    # else
+    #   @bug = Bug.new
+    #   @developers = []
+    # end 
     @projects = current_user.admin? ? Project.all : current_user.projects
-    if params[:project_id].present?
-      @project = @projects.find(params[:project_id])
-      @bug = Bug.new(project_id: @project.id)
-      @developers = @project.users.where(role: :developer)
-    else
-      @bug = Bug.new
-      @developers = []
-    end 
+    @bug = Bug.new
+    @developers = []
   end
 
   def create
@@ -50,17 +53,33 @@ class BugsController < ApplicationController
   end
 
   def update
-    service = UpdateBugService.new(@bug, current_user, bug_params)
-    
-    result = service.call
-    
-    if result == :unauthorized
-      redirect_to bug_path(@bug) , alert: "You cannot update this bug"
-    elsif result 
-      redirect_to bug_path(@bug) , notice: "Bug updated successfully!"
-    else 
-      render :edit, status: :unprocessable_entity
+  service = UpdateBugService.new(@bug, current_user, bug_params)
+  @update_result = service.call
+
+  respond_to do |format|
+    format.turbo_stream do
+      if @update_result == :unauthorized
+        @update_message = "You cannot update this bug."
+        render :update, status: :forbidden
+      elsif @update_result
+        @update_message = "Bug updated successfully!"
+        render :update
+      else
+        @update_message = @bug.errors.full_messages.to_sentence
+        render :update, status: :unprocessable_entity
+      end
     end
+
+    format.html do
+      if @update_result == :unauthorized
+        redirect_to bug_path(@bug), alert: "You cannot update this bug."
+      elsif @update_result
+        redirect_to bug_path(@bug), notice: "Bug updated successfully!"
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+  end
   end
 
   def destroy
@@ -79,8 +98,6 @@ class BugsController < ApplicationController
   
     render :new
   end
-
-  private
 
   def set_bug
     # if current_user.admin?

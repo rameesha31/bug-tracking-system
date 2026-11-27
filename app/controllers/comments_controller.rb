@@ -8,9 +8,22 @@ class CommentsController < ApplicationController
     @comment.user = current_user
 
     if @comment.save
-      redirect_to bug_path(@bug), notice: "Comment added successfully!"
+      respond_to do |format|
+        format.turbo_stream
+        format.html do
+          redirect_to bug_path(@bug), notice: "Comment added successfully!"
+        end
+      end
     else
-      redirect_to bug_path(@bug), alert: "Comment cannot be empty."
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("comment_form",partial: "comments/form",locals: { bug: @bug, comment: @comment }), 
+          status: :unprocessable_entity
+        end
+        format.html do
+          redirect_to bug_path(@bug), alert: "Comment cannot be empty."
+        end
+      end
     end
   end
 
@@ -25,7 +38,12 @@ class CommentsController < ApplicationController
       
     @comment.destroy
   
-    redirect_to bug_path(@bug), notice: "Comment deleted successfully!"
+    respond_to do |format|
+      format.turbo_stream
+      format.html do
+        redirect_to bug_path(@bug), notice: "Comment deleted successfully!"
+      end
+    end
   end
   private
 
